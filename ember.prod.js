@@ -6,7 +6,7 @@
  *            Portions Copyright 2008-2011 Apple Inc. All rights reserved.
  * @license   Licensed under MIT license
  *            See https://raw.github.com/emberjs/ember.js/master/LICENSE
- * @version   2.10.0-beta.2-updated-beta+b507eb5f
+ * @version   2.10.0-beta.2-patched-beta+b507eb5f
  */
 
 var enifed, requireModule, require, Ember;
@@ -39551,7 +39551,7 @@ enifed('ember/index', ['exports', 'require', 'ember-environment', 'ember-utils',
 enifed("ember/version", ["exports"], function (exports) {
   "use strict";
 
-  exports.default = "2.10.0-beta.2-updated-beta+b507eb5f";
+  exports.default = "2.10.0-beta.2-patched-beta+b507eb5f";
 });
 enifed('internal-test-helpers/apply-mixins', ['exports', 'ember-utils'], function (exports, _emberUtils) {
   'use strict';
@@ -51627,20 +51627,9 @@ function encodePathSegment(str) {
 
 var escapeRegex = /(\/|\.|\*|\+|\?|\||\(|\)|\[|\]|\{|\}|\\)/g;
 var isArray = Array.isArray;
-var hasOwnProperty = Object.prototype.hasOwnProperty;
 function getParam(params, key) {
-    if (typeof params !== "object" || params === null) {
-        throw new Error("You must pass an object as the second argument to `generate`.");
-    }
-    if (!hasOwnProperty.call(params, key)) {
-        throw new Error("You must provide param `" + key + "` to `generate`.");
-    }
     var value = params[key];
-    var str = typeof value === "string" ? value : "" + value;
-    if (str.length === 0) {
-        throw new Error("You must provide a param `" + key + "`.");
-    }
-    return str;
+    return typeof value === "string" ? value : "" + value;
 }
 var eachChar = [];
 eachChar[0 /* Static */] = function (segment, currentState) {
