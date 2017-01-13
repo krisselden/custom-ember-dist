@@ -59,7 +59,7 @@
           ENV.__test_hook_count__ += object;
         });
 
-        window.ENV.FEATURES = !!QUnit.urlParams.prod ? {"features-stripped-test":false,"ember-libraries-isregistered":false,"ember-runtime-computed-uniq-by":true,"ember-improved-instrumentation":false,"ember-runtime-enumerable-includes":true,"ember-string-ishtmlsafe":true,"ember-testing-check-waiters":true,"ember-metal-weakmap":false,"ember-glimmer-allow-backtracking-rerender":false,"ember-testing-resume-test":false,"mandatory-setter":false,"ember-glimmer-detect-backtracking-rerender":false} : {"features-stripped-test":false,"ember-libraries-isregistered":false,"ember-runtime-computed-uniq-by":true,"ember-improved-instrumentation":false,"ember-runtime-enumerable-includes":true,"ember-string-ishtmlsafe":true,"ember-testing-check-waiters":true,"ember-metal-weakmap":false,"ember-glimmer-allow-backtracking-rerender":false,"ember-testing-resume-test":false,"mandatory-setter":true,"ember-glimmer-detect-backtracking-rerender":true};
+        window.ENV.FEATURES = !!QUnit.urlParams.prod ? {"features-stripped-test":false,"ember-libraries-isregistered":false,"ember-improved-instrumentation":false,"ember-metal-weakmap":false,"ember-glimmer-allow-backtracking-rerender":false,"ember-testing-resume-test":false,"ember-factory-for":true,"ember-no-double-extend":false,"mandatory-setter":false,"ember-glimmer-detect-backtracking-rerender":false} : {"features-stripped-test":false,"ember-libraries-isregistered":false,"ember-improved-instrumentation":false,"ember-metal-weakmap":false,"ember-glimmer-allow-backtracking-rerender":false,"ember-testing-resume-test":false,"ember-factory-for":true,"ember-no-double-extend":false,"mandatory-setter":true,"ember-glimmer-detect-backtracking-rerender":true};
 
         // Handle extending prototypes
         ENV['EXTEND_PROTOTYPES'] = !!QUnit.urlParams.extendprototypes;
@@ -159,7 +159,7 @@
         // Enable/disable livereload
         QUnit.config.urlConfig.push({ id: 'livereload', label: 'Live Reload'});
         // Handle JSHint
-        QUnit.config.urlConfig.push('nojshint');
+        QUnit.config.urlConfig.push({ id: 'nolint', label: 'Skip ESLint'});
         QUnit.config.urlConfig.push('forceskip');
 
         if (QUnit.config.seed) {
@@ -186,9 +186,9 @@
       for (var moduleName in Ember.__loader.registry) {
         if (!moduleName.match(packageRegexp))   { continue; }
         if (moduleName.match(skipPackageRegexp)) { continue; }
+        if (QUnit.urlParams.nolint && moduleName.match(/lint-test$/)) { continue; }
 
         if (moduleName.match(/[_-]test$/)) { Ember.__loader.require(moduleName); }
-        if (!QUnit.urlParams.nojshint && moduleName.match(/[-_.]jshint$/)) { Ember.__loader.require(moduleName); }
       }
     </script>
 

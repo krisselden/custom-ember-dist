@@ -1,16 +1,15 @@
 ;(function() {
 /*!
  * @overview  Ember - JavaScript Application Framework
- * @copyright Copyright 2011-2016 Tilde Inc. and contributors
+ * @copyright Copyright 2011-2017 Tilde Inc. and contributors
  *            Portions Copyright 2006-2011 Strobe Inc.
  *            Portions Copyright 2008-2011 Apple Inc. All rights reserved.
  * @license   Licensed under MIT license
  *            See https://raw.github.com/emberjs/ember.js/master/LICENSE
- * @version   2.10.0-beta.2-patched-beta+dafad266
+ * @version   2.12.0-alpha.1-canary-loose-params+3d303232
  */
 
-var enifed, requireModule, require, Ember;
-var mainContext = this;
+var enifed, requireModule, Ember;
 
 (function() {
   var isNode = typeof window === 'undefined' &&
@@ -40,14 +39,14 @@ var mainContext = this;
       registry[name] = value;
     };
 
-    require = requireModule = function(name) {
+    requireModule = function(name) {
       return internalRequire(name, null);
     };
 
     // setup `require` module
-    require['default'] = require;
+    requireModule['default'] = requireModule;
 
-    require.has = function registryHas(moduleName) {
+    requireModule.has = function registryHas(moduleName) {
       return !!registry[moduleName] || !!registry[moduleName + '/index'];
     };
 
@@ -88,7 +87,7 @@ var mainContext = this;
         if (deps[i] === 'exports') {
           reified[i] = exports;
         } else if (deps[i] === 'require') {
-          reified[i] = require;
+          reified[i] = requireModule;
         } else {
           reified[i] = internalRequire(deps[i], name);
         }
@@ -103,16 +102,14 @@ var mainContext = this;
 
     Ember.__loader = {
       define: enifed,
-      require: require,
+      require: requireModule,
       registry: registry
     };
   } else {
     enifed = Ember.__loader.define;
-    require = requireModule = Ember.__loader.require;
+    requireModule = Ember.__loader.require;
   }
 })();
-
-var babelHelpers;
 
 function classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -304,6 +301,7 @@ enifed('ember-debug/deprecate', ['exports', 'ember-metal', 'ember-console', 'emb
       emberjs.com website.
     @for Ember
     @public
+    @since 1.0.0
   */
 
   function deprecate(message, test, options) {
@@ -402,6 +400,7 @@ enifed('ember-debug/index', ['exports', 'ember-metal', 'ember-environment', 'emb
     @param {Boolean} test Must be truthy for the assertion to pass. If
       falsy, an exception will be thrown.
     @public
+    @since 1.0.0
   */
   _emberMetal.setDebugFunction('assert', function assert(desc, test) {
     if (!test) {
@@ -724,6 +723,7 @@ enifed('ember-debug/warn', ['exports', 'ember-console', 'ember-metal', 'ember-de
       The `id` should be namespaced by dots, e.g. "ember-debug.feature-flag-with-features-stripped"
     @for Ember
     @public
+    @since 1.0.0
   */
 
   function warn(message, test, options) {
@@ -1664,24 +1664,27 @@ enifed('ember-testing/helpers/wait', ['exports', 'ember-testing/test/waiters', '
     any async operations from other helpers (or your assertions) have been processed.
   
     This is most often used as the return value for the helper functions (see 'click',
-    'fillIn','visit',etc).
+    'fillIn','visit',etc). However, there is a method to register a test helper which
+    utilizes this method without the need to actually call `wait()` in your helpers.
+  
+    The `wait` helper is built into `registerAsyncHelper` by default. You will not need
+    to `return app.testHelpers.wait();` - the wait behavior is provided for you.
   
     Example:
   
     ```javascript
     Ember.Test.registerAsyncHelper('loginUser', function(app, username, password) {
       visit('secured/path/here')
-      .fillIn('#username', username)
-      .fillIn('#password', password)
-      .click('.submit')
-  
-      return app.testHelpers.wait();
+        .fillIn('#username', username)
+        .fillIn('#password', password)
+        .click('.submit');
     });
   
     @method wait
     @param {Object} value The value to be returned.
     @return {RSVP.Promise}
     @public
+    @since 1.0.0
   */
 
   function wait(app, value) {
@@ -1755,7 +1758,9 @@ enifed('ember-testing/initializers', ['exports', 'ember-runtime'], function (exp
     }
   });
 });
-enifed('ember-testing/setup_for_testing', ['exports', 'ember-metal', 'ember-views', 'ember-testing/test/adapter', 'ember-testing/test/pending_requests', 'ember-testing/adapters/qunit'], function (exports, _emberMetal, _emberViews, _emberTestingTestAdapter, _emberTestingTestPending_requests, _emberTestingAdaptersQunit) {
+enifed('ember-testing/setup_for_testing', ['exports', 'ember-metal', 'ember-views', 'ember-testing/test/adapter', 'ember-testing/test/pending_requests', 'ember-testing/adapters/adapter', 'ember-testing/adapters/qunit'], function (exports, _emberMetal, _emberViews, _emberTestingTestAdapter, _emberTestingTestPending_requests, _emberTestingAdaptersAdapter, _emberTestingAdaptersQunit) {
+  /* global self */
+
   'use strict';
 
   exports.default = setupForTesting;
@@ -1779,7 +1784,7 @@ enifed('ember-testing/setup_for_testing', ['exports', 'ember-metal', 'ember-view
     var adapter = _emberTestingTestAdapter.getAdapter();
     // if adapter is not manually set default to QUnit
     if (!adapter) {
-      _emberTestingTestAdapter.setAdapter(new _emberTestingAdaptersQunit.default());
+      _emberTestingTestAdapter.setAdapter(typeof self.QUnit === 'undefined' ? new _emberTestingAdaptersAdapter.default() : new _emberTestingAdaptersQunit.default());
     }
 
     _emberViews.jQuery(document).off('ajaxSend', _emberTestingTestPending_requests.incrementPendingRequests);
@@ -1844,7 +1849,7 @@ enifed('ember-testing/support', ['exports', 'ember-metal', 'ember-views', 'ember
     });
   }
 });
-enifed('ember-testing/test', ['exports', 'ember-testing/test/helpers', 'ember-testing/test/on_inject_helpers', 'ember-testing/test/promise', 'ember-testing/test/waiters', 'ember-testing/test/adapter', 'ember-metal'], function (exports, _emberTestingTestHelpers, _emberTestingTestOn_inject_helpers, _emberTestingTestPromise, _emberTestingTestWaiters, _emberTestingTestAdapter, _emberMetal) {
+enifed('ember-testing/test', ['exports', 'ember-testing/test/helpers', 'ember-testing/test/on_inject_helpers', 'ember-testing/test/promise', 'ember-testing/test/waiters', 'ember-testing/test/adapter'], function (exports, _emberTestingTestHelpers, _emberTestingTestOn_inject_helpers, _emberTestingTestPromise, _emberTestingTestWaiters, _emberTestingTestAdapter) {
   /**
     @module ember
     @submodule ember-testing
@@ -1880,12 +1885,9 @@ enifed('ember-testing/test', ['exports', 'ember-testing/test/helpers', 'ember-te
     promise: _emberTestingTestPromise.promise,
     resolve: _emberTestingTestPromise.resolve,
     registerWaiter: _emberTestingTestWaiters.registerWaiter,
-    unregisterWaiter: _emberTestingTestWaiters.unregisterWaiter
+    unregisterWaiter: _emberTestingTestWaiters.unregisterWaiter,
+    checkWaiters: _emberTestingTestWaiters.checkWaiters
   };
-
-  if (true) {
-    Test.checkWaiters = _emberTestingTestWaiters.checkWaiters;
-  }
 
   /**
    Used to allow ember-testing to communicate with a specific testing
@@ -2386,7 +2388,7 @@ enifed('ember-testing/test/waiters', ['exports', 'ember-metal'], function (expor
   }
 
   function generateDeprecatedWaitersArray() {
-    _emberMetal.deprecate('Usage of `Ember.Test.waiters` is deprecated. Please refactor to `Ember.Test.checkWaiters`.', !true, { until: '2.8.0', id: 'ember-testing.test-waiters' });
+    _emberMetal.deprecate('Usage of `Ember.Test.waiters` is deprecated. Please refactor to `Ember.Test.checkWaiters`.', false, { until: '2.8.0', id: 'ember-testing.test-waiters' });
 
     var array = new Array(callbacks.length);
     for (var i = 0; i < callbacks.length; i++) {
