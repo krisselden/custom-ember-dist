@@ -6,7 +6,7 @@
  *            Portions Copyright 2008-2011 Apple Inc. All rights reserved.
  * @license   Licensed under MIT license
  *            See https://raw.github.com/emberjs/ember.js/master/LICENSE
- * @version   2.12.0-alpha.1-canary-loose-params+3d303232
+ * @version   2.12.0-alpha.1-canary-loose-params-no-double-extend+2cdcf38f
  */
 
 var enifed, requireModule, Ember;
@@ -1318,7 +1318,7 @@ enifed('container/container', ['exports', 'ember-utils', 'ember-environment', 'e
   }, _Container$prototype[FACTORY_FOR] = function (fullName) {
     var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
-    if (false) {
+    if (true) {
       if (true) {
         return this.factoryFor(fullName, options);
       } else {
@@ -8722,7 +8722,7 @@ enifed('ember-glimmer/environment', ['exports', 'ember-utils', 'ember-metal', 'e
               }
             };
           } else if (helperFactory.class.isHelperFactory) {
-            if (!false) {
+            if (!true) {
               helperFactory = helperFactory.create();
             }
             return {
@@ -39539,7 +39539,7 @@ enifed("ember-views/views/view", ["exports"], function (exports) {
 enifed("ember/features", ["exports"], function (exports) {
   "use strict";
 
-  exports.default = { "features-stripped-test": false, "ember-libraries-isregistered": false, "ember-improved-instrumentation": false, "ember-metal-weakmap": false, "ember-glimmer-allow-backtracking-rerender": false, "ember-testing-resume-test": false, "ember-factory-for": true, "ember-no-double-extend": false, "mandatory-setter": false, "ember-glimmer-detect-backtracking-rerender": false };
+  exports.default = { "features-stripped-test": false, "ember-libraries-isregistered": false, "ember-improved-instrumentation": false, "ember-metal-weakmap": false, "ember-glimmer-allow-backtracking-rerender": false, "ember-testing-resume-test": false, "ember-factory-for": true, "ember-no-double-extend": true, "mandatory-setter": false, "ember-glimmer-detect-backtracking-rerender": false };
 });
 enifed('ember/index', ['exports', 'require', 'ember-environment', 'ember-utils', 'container', 'ember-metal', 'backburner', 'ember-console', 'ember-runtime', 'ember-glimmer', 'ember/version', 'ember-views', 'ember-routing', 'ember-application', 'ember-extension-support'], function (exports, _require, _emberEnvironment, _emberUtils, _container, _emberMetal, _backburner, _emberConsole, _emberRuntime, _emberGlimmer, _emberVersion, _emberViews, _emberRouting, _emberApplication, _emberExtensionSupport) {
   'use strict';
@@ -40072,7 +40072,7 @@ enifed('ember/index', ['exports', 'require', 'ember-environment', 'ember-utils',
 enifed("ember/version", ["exports"], function (exports) {
   "use strict";
 
-  exports.default = "2.12.0-alpha.1-canary-loose-params+3d303232";
+  exports.default = "2.12.0-alpha.1-canary-loose-params-no-double-extend+2cdcf38f";
 });
 enifed('internal-test-helpers/apply-mixins', ['exports', 'ember-utils'], function (exports, _emberUtils) {
   'use strict';
